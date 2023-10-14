@@ -4,31 +4,31 @@ const { signToken } = require('../utils/auth');
 const axios = require('axios');
 
 const resolvers = {
-  Query: {
-    me: async (parent, args, context) => {
-      if (context.user) {
-        return User.findOne({ _id: context.user._id }).select('-__v -password');
-      }
-      throw new AuthenticationError('Not logged in');
+    Query: {
+      me: async (parent, args, context) => {
+        if (context.user) {
+          return User.findOne({ _id: context.user._id }).select('-__v -password');
+        }
+        throw new AuthenticationError('Not logged in');
+      },
+      
+      // Moved searchBooks inside the Query object
+      searchBooks: async (parent, { searchTerm }) => {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchTerm}`);
+          return response.data.items.map(book => ({
+            bookId: book.id,
+            authors: book.volumeInfo.authors || ['No author to display'],
+            title: book.volumeInfo.title,
+            description: book.volumeInfo.description,
+            image: book.volumeInfo.imageLinks?.thumbnail || '',
+          }));
+        } catch (error) {
+          throw new Error('Failed to search books');
+        }
+      },
     },
-  },
-
-   // New query to search for books
-   searchBooks: async (parent, { searchTerm }) => {
-    try {
-      const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchTerm}`);
-      return response.data.items.map(book => ({
-        bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
-      }));
-    } catch (error) {
-      throw new Error('Failed to search books');
-    }
-  },
-
+    
   Mutation: {
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
