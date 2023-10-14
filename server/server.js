@@ -18,18 +18,25 @@ const server = new ApolloServer({
   context: authMiddleware,
 });
 
-// Apply the Apollo GraphQL middleware and set the path to /graphql
-server.applyMiddleware({ app, path: '/graphql' });
+async function startServer() {
+  // Start the Apollo server
+  await server.start();
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  // Apply the Apollo GraphQL middleware and set the path to /graphql
+  server.applyMiddleware({ app, path: '/graphql' });
+
+  // Serve static assets if in production
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+  }
+
+  db.once('open', () => {
+    app.listen(PORT, () => {
+      console.log(`🌍 Now listening on localhost:${PORT}`);
+      console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+    });
+  });
 }
 
-db.once('open', () => {
-  app.listen(PORT, () => {
-    console.log(`🌍 Now listening on localhost:${PORT}`);
-    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
-  });
-});
-
+// Start the server
+startServer().catch(console.error);
