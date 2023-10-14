@@ -25,6 +25,15 @@ const typeDefs = gql`
 
   type Query {
     me: User
+    searchBooks(searchTerm: String!): [Book]
+  }
+  
+  type Book {
+    bookId: ID!
+    authors: [String]!
+    title: String!
+    description: String
+    image: String
   }
 
   type Mutation {
