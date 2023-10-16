@@ -20,7 +20,6 @@ const SignupForm = () => {
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
 
