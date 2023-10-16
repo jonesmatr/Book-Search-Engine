@@ -18,7 +18,7 @@ export const GET_ME = gql`
   }
 `;
 
-// Example of adding SEARCH_BOOKS query, you need to adjust this according to your actual GraphQL schema.
+
 
 export const SEARCH_BOOKS = gql`
   query SearchBooks($searchTerm: String!) {
