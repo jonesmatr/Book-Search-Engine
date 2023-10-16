@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   Container,
@@ -14,12 +14,22 @@ import Auth from '../utils/auth';
 
 const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState(''); // New state to hold the submitted search term
+
   const { loading, data } = useQuery(SEARCH_BOOKS, {
-    variables: { searchTerm: searchInput }
+    variables: { searchTerm: submittedSearch }, // Changed to use submittedSearch
+    skip: !submittedSearch // Skip the query if submittedSearch is empty
   });
+
+  const searchedBooks = data?.books || [];
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    setSubmittedSearch(searchInput); // Update submittedSearch when the form is submitted
+  };
+
   const [saveBook] = useMutation(SAVE_BOOK);
   
-  const searchedBooks = data?.books || [];
 
   const handleSaveBook = async (bookId) => {
     const bookToSave = searchedBooks.find((book) => book.id === bookId);
