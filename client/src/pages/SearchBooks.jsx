@@ -8,9 +8,10 @@ import {
   Card,
   Row
 } from 'react-bootstrap';
-import { SEARCH_BOOKS } from '../utils/queries';
-import { SAVE_BOOK, GET_ME } from '../utils/mutations'; // Import GET_ME
+import { SAVE_BOOK } from '../utils/mutations';
+import { SEARCH_BOOKS, GET_ME } from '../utils/queries'; // Corrected the import
 import Auth from '../utils/auth';
+
 
 const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
