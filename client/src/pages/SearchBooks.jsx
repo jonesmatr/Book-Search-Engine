@@ -9,27 +9,36 @@ import {
   Row
 } from 'react-bootstrap';
 import { SEARCH_BOOKS } from '../utils/queries';
-import { SAVE_BOOK } from '../utils/mutations';
+import { SAVE_BOOK, GET_ME } from '../utils/mutations'; // Import GET_ME
 import Auth from '../utils/auth';
 
 const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
-  const [submittedSearch, setSubmittedSearch] = useState(''); // New state to hold the submitted search term
+  const [submittedSearch, setSubmittedSearch] = useState('');
+  const [savedBookIds, setSavedBookIds] = useState([]); // Added this line to manage savedBookIds state
 
   const { loading, data } = useQuery(SEARCH_BOOKS, {
-    variables: { searchTerm: submittedSearch }, // Changed to use submittedSearch
-    skip: !submittedSearch // Skip the query if submittedSearch is empty
+    variables: { searchTerm: submittedSearch },
+    skip: !submittedSearch
   });
+
+  const { data: userData } = useQuery(GET_ME); // Added this line to get user's saved books
+
+  useEffect(() => {
+    if (userData) {
+      // Update savedBookIds state with IDs of user's saved books
+      setSavedBookIds(userData.me.savedBooks.map((book) => book.bookId));
+    }
+  }, [userData]);
 
   const searchedBooks = data?.books || [];
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    setSubmittedSearch(searchInput); // Update submittedSearch when the form is submitted
+    setSubmittedSearch(searchInput);
   };
 
   const [saveBook] = useMutation(SAVE_BOOK);
-  
 
   const handleSaveBook = async (bookId) => {
     const bookToSave = searchedBooks.find((book) => book.id === bookId);
@@ -41,6 +50,8 @@ const SearchBooks = () => {
           // Update cache or refetch queries if needed
         },
       });
+
+      setSavedBookIds([...savedBookIds, bookId]); // Update savedBookIds state
     } catch (err) {
       console.error(err);
     }
