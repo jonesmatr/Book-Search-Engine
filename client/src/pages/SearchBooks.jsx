@@ -39,22 +39,31 @@ const SearchBooks = () => {
     setSubmittedSearch(searchInput);
   };
 
-  const [saveBook] = useMutation(SAVE_BOOK);
-
   const handleSaveBook = async (bookId) => {
-    const bookToSave = searchedBooks.find((book) => book.bookID === bookId);
-
-    try {
-      await saveBook({
-        variables: { input: bookToSave },
-        update: (cache, { data: { saveBook } }) => {
-          // Update cache or refetch queries if needed
-        },
-      });
-
-      setSavedBookIds([...savedBookIds, bookId]); // Update savedBookIds state
-    } catch (err) {
-      console.error(err);
+    const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+  
+    if (bookToSave) {
+      try {
+        await saveBook({
+          variables: {
+            authors: bookToSave.authors,
+            description: bookToSave.description,
+            title: bookToSave.title,
+            bookId: bookToSave.bookId,
+            image: bookToSave.image,
+            link: bookToSave.link   // add or remove this line based on whether the 'link' field is required or not
+          },
+          update: (cache, { data: { saveBook } }) => {
+            // Update cache or refetch queries if needed
+          },
+        });
+  
+        setSavedBookIds([...savedBookIds, bookId]);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      console.error("Book not found");
     }
   };
 
