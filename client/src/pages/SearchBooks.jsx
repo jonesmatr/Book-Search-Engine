@@ -32,7 +32,7 @@ const SearchBooks = () => {
     }
   }, [userData]);
 
-  const searchedBooks = data?.books || [];
+  const searchedBooks = data?.searchBooks || [];
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -42,7 +42,7 @@ const SearchBooks = () => {
   const [saveBook] = useMutation(SAVE_BOOK);
 
   const handleSaveBook = async (bookId) => {
-    const bookToSave = searchedBooks.find((book) => book.id === bookId);
+    const bookToSave = searchedBooks.find((book) => book.bookID === bookId);
 
     try {
       await saveBook({
