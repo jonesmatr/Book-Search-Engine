@@ -18,6 +18,15 @@ const SearchBooks = () => {
   const [submittedSearch, setSubmittedSearch] = useState('');
   const [savedBookIds, setSavedBookIds] = useState([]); // Added this line to manage savedBookIds state
 
+  const [saveBook, { error }] = useMutation(SAVE_BOOK, {
+    onCompleted: (data) => {
+      // Optionally, handle the completion of the mutation, e.g., show a success message
+    },
+    onError: (error) => {
+      console.error("Error saving book:", error);
+    },
+  });
+
   const { loading, data } = useQuery(SEARCH_BOOKS, {
     variables: { searchTerm: submittedSearch },
     skip: !submittedSearch
