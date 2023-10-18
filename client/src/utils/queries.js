@@ -22,7 +22,7 @@ export const GET_ME = gql`
 
 export const SEARCH_BOOKS = gql`
   query SearchBooks($searchTerm: String!) {
-    books(searchTerm: $searchTerm) {
+    searchBooks(searchTerm: $searchTerm) {
       bookId
       authors
       title
