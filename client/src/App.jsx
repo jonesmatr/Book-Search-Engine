@@ -12,8 +12,9 @@ const client = new ApolloClient({
   uri,
   cache,
   headers: {
-    authorization: localStorage.getItem('id_token') || '',
+    authorization: `Bearer ${localStorage.getItem('id_token')}` || '',
   },
+  
 });
 
 function App() {
